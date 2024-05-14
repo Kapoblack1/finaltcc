@@ -1,71 +1,79 @@
-// components/LoginPage.js
-import React from "react";
-import { useState } from "react";
+import React, { useState } from "react";
 import {
   View,
   Text,
   TextInput,
   TouchableOpacity,
   StyleSheet,
+  Image,
+  Alert
 } from "react-native";
-import { Check } from "phosphor-react-native";
+import { useNavigation } from "@react-navigation/native";
+import firebase from "firebase/compat/app";
+import "firebase/compat/auth";
+import "firebase/compat/firestore";
+import logo from '../../../assets/logo.png';
 
-const LoginScreen = ({
-  onLoginPress,
-  onSignUpPress,
-  onForgotPasswordPress,
-}) => {
-  const [agreeToTerms, setAgreeToTerms] = useState(false);
+const LoginScreen2 = () => {
+  const navigation = useNavigation();
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+
+  const handleLogin = async () => {
+    try {
+      const userCredential = await firebase.auth().signInWithEmailAndPassword(email, password);
+      const userId = userCredential.user.uid;
+      
+      const userDoc = await firebase.firestore().collection('users').doc(userId).get();
+      const userData = userDoc.data();
+    
+      if (userData.role === 'condutor') {
+        navigation.navigate('HomeScreenC');
+      } else {
+        navigation.navigate('HomeScreenP');
+      }
+    } catch (error) {
+      Alert.alert("Login Failed", error.message);
+    }
+  };
+
+  const createAccount = () => {
+    navigation.navigate('RegisterScreen');
+  };
 
   return (
     <View style={styles.container}>
+      <View style={styles.logoContainer}>
+        <Image source={logo} style={styles.logo} />
+      </View>
       <Text style={styles.header}>Login</Text>
       <Text style={styles.subtitle}>Seja bem vindo ao booleia</Text>
-
       <Text style={styles.title}>Email</Text>
-
       <TextInput
-        placeholder="Ex .passageiro@hotmail.com"
+        placeholder="Ex. passageiro@hotmail.com"
         style={styles.input}
         keyboardType="email-address"
         autoCapitalize="none"
         placeholderTextColor={"#000"}
+        value={email}
+        onChangeText={setEmail}
       />
-      <Text style={styles.title}>Passageiro</Text>
+      <Text style={styles.title}>Senha</Text>
       <TextInput
         placeholder="*******************"
         secureTextEntry
         style={styles.input}
         placeholderTextColor={"#000"}
+        value={password}
+        onChangeText={setPassword}
       />
-
-      <TouchableOpacity onPress={onForgotPasswordPress}>
+      <TouchableOpacity onPress={() => Alert.alert('Esqueceu a senha')}>
         <Text style={styles.forgotPasswordText}>Esqueceu a palavra passe?</Text>
       </TouchableOpacity>
-
-      <View style={styles.checkboxContainer}>
-        <TouchableOpacity
-          onPress={() => setAgreeToTerms(!agreeToTerms)}
-          style={styles.checkbox}
-        >
-          {agreeToTerms && (
-            <View style={styles.checked}>
-              <Check size={15} color="#2D93EA" weight="bold" />
-            </View>
-          )}
-        </TouchableOpacity>
-        <Text style={styles.checkboxLabel}>
-          Ao inscrever-se concordo com os nossos
-          <Text style={styles.linkText}> Termos e Condições </Text>e com a
-          <Text style={styles.linkText}> Política de Privacidade.</Text>
-        </Text>
-      </View>
-
-      <TouchableOpacity style={styles.loginButton} onPress={onLoginPress}>
+      <TouchableOpacity style={styles.loginButton} onPress={handleLogin}>
         <Text style={styles.loginButtonText}>Login</Text>
       </TouchableOpacity>
-
-      <TouchableOpacity onPress={onSignUpPress} style={styles.signUpButton}>
+      <TouchableOpacity onPress={createAccount} style={styles.signUpButton}>
         <Text>Não tem uma conta?</Text>
         <Text style={styles.signUpText}> Criar conta</Text>
       </TouchableOpacity>
@@ -78,6 +86,15 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingHorizontal: "8%",
     backgroundColor: "#ffffff", // Ajuste conforme a cor de fundo da imagem
+  },
+  logoContainer:{
+    alignItems: 'center',
+    top: '13%',
+  },
+  logo:{
+
+    width: 350,
+    height: 99
   },
   header: {
     fontSize: 24,
@@ -172,4 +189,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default LoginScreen;
+export default LoginScreen2;

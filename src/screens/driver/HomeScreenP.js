@@ -26,9 +26,8 @@ import config from "../../../configApi";
 import MapViewDirections from "react-native-maps-directions";
 import MapView, { PROVIDER_GOOGLE, Marker } from "react-native-maps";
 import { GooglePlacesAutocomplete } from "react-native-google-places-autocomplete";
-import { useNavigation } from "@react-navigation/native";
 
-export default function HomeScreen({ route }) {
+export default function HomeScreenC({ route }) {
   const mapEl = useRef(null);
   const userId = route.params?.userId;
   const bottomSheetRef = useRef(null);
@@ -36,18 +35,15 @@ export default function HomeScreen({ route }) {
   const [origin, setOrigin] = useState(null);
   const [distance, setDistance] = useState(null);
   const [destination, setDestination] = useState(null);
-  const [originName, setOriginName] = useState(null);
-  const [destinationName, setDestinationName] = useState(null);
   const toggleUserType = () => {
-    setUserType(userType === "passageiro" ? "condutor" : "passageiro");
+    setUserType(userType === 'passageiro' ? 'condutor' : 'passageiro');
   };
-  const [userType, setUserType] = useState("passageiro");
+  const [userType, setUserType] = useState('passageiro');
   const [originMarker, setOriginMarker] = useState(null);
   const snapPoints = useMemo(() => ["30%", "50%", "90%"], []);
   const [isKeyboardVisible, setKeyboardVisible] = useState(false);
   const [destinationMarker, setDestinationMarker] = useState(null);
   const [showDestinationInput, setShowDestinationInput] = useState(true);
-  const navigation = useNavigation();
 
   const handleSheetChanges = useCallback((index) => {
     console.log("Bottom sheet position changed to index", index);
@@ -58,22 +54,6 @@ export default function HomeScreen({ route }) {
       console.log("Expande");
     }
   }, []);
-
-  const navigateToNextPage = () => {
-    if (!origin || !destination || !originMarker) {
-      console.error("Required location data is not available.");
-      return; // Prevent navigation if data is incomplete
-    }
-  
-    navigation.navigate("CarListScreen", {
-      originCoords: origin,
-      destinationCoords: destination,
-      currentLocation: originMarker, // Assuming the current location is the originMarker
-      originName: originName,
-      destinationName: destinationName,
-      travelDistance: distance,
-    });
-  };
 
   useEffect(() => {
     const keyboardDidShowListener = Keyboard.addListener(
@@ -91,7 +71,7 @@ export default function HomeScreen({ route }) {
         setKeyboardVisible(false);
         console.log("Teclado ocultado");
         hideBottomSheet();
-        setShowDestinationInput(true); // Mostrar input de destino quando teclado ocultado
+        setShowDestinationInput(true);  // Mostrar input de destino quando teclado ocultado
       }
     );
 
@@ -115,10 +95,6 @@ export default function HomeScreen({ route }) {
     }
   }, [userId]);
 
-  useEffect(() => {
-    console.log("Origin set:", origin);
-    console.log("Destination set:", destination);
-  }, [origin, destination]);
   useEffect(() => {
     (async function obterLocalizacao() {
       const { status } = await Location.requestForegroundPermissionsAsync();
@@ -172,11 +148,12 @@ export default function HomeScreen({ route }) {
   };
 
   const handleOriginFocus = () => {
-    setShowDestinationInput(false); // Ocultar input de destino quando origem focado
+    setShowDestinationInput(false);  // Ocultar input de destino quando origem focado
   };
 
   // Função chamada quando o campo de destino é focado
-  const handleDestinationFocus = () => {};
+  const handleDestinationFocus = () => {
+  };
 
   // Alteração no retorno do componente HomeScreen
   return (
@@ -236,45 +213,74 @@ export default function HomeScreen({ route }) {
           style={{ borderRadius: 1 }}
         >
 
-
+          {/*
+          <TouchableOpacity
+            style={styles.button}
+            onPress={definirLocalizacaoAtualComoOrigem}
+          >
+            <Text style={styles.buttonText}>Definir Localização Atual como origem</Text>
+          </TouchableOpacity>
+*/}
           {/* Wrapper azul em volta dos inputs de pesquisa */}
           <View style={[styles.searchWrapper, { top: 22 }]}>
-            {/* Input para origem */}
-             
+    
+           {/*<View style={styles.search}>
+              <GooglePlacesAutocomplete
+                textInputProps={{
+                  onFocus: handleOriginFocus, // Directly using the onFocus handler here
+                }}
+                placeholder="Origem"
+                onPress={(data, details = null) => {
+                  if (details && details.geometry) {
+                    const newOrigin = {
+                      latitude: details.geometry.location.lat,
+                      longitude: details.geometry.location.lng,
+                      latitudeDelta: 0.00092,
+                      longitudeDelta: 0.0031,
+                    };
+                    setOrigin(newOrigin);
+                    setOriginMarker(newOrigin);
+                  }
+                }}
+                query={{
+                  key: config.googleApi,
+                  language: "pt-br",
+                }}
+                fetchDetails={true}
+                styles={googleAutocompleteStyles}
+              />
+            </View> */} 
 
             {/* Input para destino */}
-            {showDestinationInput && (
-              <View style={[styles.search, { zIndex: 1 }]}>
-                <GooglePlacesAutocomplete
-                  placeholder="  Para onde vamos ?"
-                  textInputProps={{
-                    onFocus: handleDestinationFocus, // Usando diretamente o manipulador onFocus aqui
-                  }}
-                  onPress={(data, details = null) => {
-                    if (details && details.geometry) {
-                      const newDestination = {
-                        latitude: details.geometry.location.lat,
-                        longitude: details.geometry.location.lng,
-                        latitudeDelta: 0.00092,
-                        longitudeDelta: 0.0031,
-                      };
-                      setDestination(newDestination);
-                      setDestinationMarker(newDestination);
-                      setDestinationName(data.description);
-                    }
-                  }}
-                  query={{
-                    key: config.googleApi,
-                    language: "pt-br",
-                  }}
-                  fetchDetails={true}
-                  styles={googleAutocompleteStyles}
-                />
-              </View>
-            )}
+            {showDestinationInput && (<View style={[styles.search, { zIndex: 1 }]}> 
+              <GooglePlacesAutocomplete
+                placeholder="    Para onde vamos?"
+                textInputProps={{
+                  onFocus: handleDestinationFocus, // Usando diretamente o manipulador onFocus aqui
+                }}
+                onPress={(data, details = null) => {
+                  if (details && details.geometry) {
+                    const newDestination = {
+                      latitude: details.geometry.location.lat,
+                      longitude: details.geometry.location.lng,
+                      latitudeDelta: 0.00092,
+                      longitudeDelta: 0.0031,
+                    };
+                    setDestination(newDestination);
+                    setDestinationMarker(newDestination);
+                  }
+                }}
+                query={{
+                  key: config.googleApi,
+                  language: "pt-br",
+                }}
+                fetchDetails={true}
+                styles={googleAutocompleteStyles}
+              />
+            </View>)}
 
             {!isKeyboardVisible && (
-              <TouchableOpacity style={styles.olaButton} onPress={navigateToNextPage}>
+              <TouchableOpacity style={styles.olaButton}>
                 <Text style={styles.buttonText}>Procurar</Text>
               </TouchableOpacity>
             )}
@@ -290,7 +296,7 @@ const googleAutocompleteStyles = {
     position: "absolute",
     top: 20,
     width: "100%",
-    zIndex: 2, // Z-Index elevado para garantir que as sugestões fiquem sobre outros elementos
+    zIndex: 5,  // Z-Index elevado para garantir que as sugestões fiquem sobre outros elementos
   },
   textInputContainer: {
     backgroundColor: "transparent",
@@ -312,8 +318,8 @@ const googleAutocompleteStyles = {
   listView: {
     backgroundColor: "white",
     marginTop: 0,
-    elevation: 5, // Android
-    zIndex: 5, // iOS
+    elevation: 5,  // Android
+    zIndex: 5,  // iOS
   },
   row: {
     paddingVertical: 10,
@@ -392,11 +398,12 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     paddingHorizontal: 20,
     borderRadius: 5,
+
   },
   buttonText: {
     color: "#FFF",
     fontSize: 16,
-    textAlign: "center",
+    textAlign: "center"
   },
   olaButton: {
     backgroundColor: "#188AEC",
@@ -408,13 +415,13 @@ const styles = StyleSheet.create({
     borderRadius: 55,
   },
   searchWrapper: {
-    position: "absolute",
-    top: 20, // Espaço do topo da tela
-    width: "100%",
+    position: 'absolute',
+    top: 20,  // Espaço do topo da tela
+    width: '100%',
     paddingHorizontal: 20,
     zIndex: 1,
   },
   search: {
-    marginBottom: 60, // Aumente o espaço se necessário para evitar sobreposição
+    marginBottom: 65,  // Aumente o espaço se necessário para evitar sobreposição
   },
 });

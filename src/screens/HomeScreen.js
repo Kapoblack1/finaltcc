@@ -103,7 +103,6 @@ export default function HomeScreen({ route }) {
         >
           <View style={styles.map}>
             <MapView
-              provider={PROVIDER_GOOGLE}
               style={styles.map}
               region={origin}
               showsUserLocation={true}

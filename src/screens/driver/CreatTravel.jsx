@@ -8,6 +8,7 @@ import {
   TouchableOpacity,
   StyleSheet,
   Platform,
+  TextInput,
 } from "react-native";
 import {
   CaretLeft,
@@ -15,8 +16,9 @@ import {
   Star,
   Money,
   CreditCard,
+  TextIndent,
 } from "phosphor-react-native";
-const TravelInformation = () => {
+const CreatTravel = () => {
   const carData = {
     id: "1",
     name: "Toyota Tundra",
@@ -77,35 +79,40 @@ const TravelInformation = () => {
             </View>
           </View>
           <View style={styles.separator}></View>
-          <View style={styles.viagem}>
-            <Text style={styles.title}>Viagem</Text>
-            <View style={styles.center1}>
-              <Text style={styles.price}>Preço da Viagem:</Text>
-              <Text style={styles.price}>{carData.price} KZ</Text>
-            </View>
-          </View>
-          <View style={styles.driver}>
-            <Image source={carData.driver} style={styles.driverImage} />
-            <Text style={styles.driverName}>{carData.driverName}</Text>
-          </View>
-          <View>
-          <Text style={styles.select}>Selecione o método de pagamento</Text>
-                <TouchableOpacity
-                  style={[styles.paymentOption, selectedPayment === 'cash' ? styles.selectedPayment : null]}
-                  onPress={() => setSelectedPayment('cash')}
-                >
-                  <Money size={80} color={selectedPayment === 'cash' ? '#188AEC' : 'grey'} weight="fill" />
-                  <Text style={styles.money}>Dinheiro</Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                  style={[styles.paymentOption, selectedPayment === 'express' ? styles.selectedPayment : null]}
-                  onPress={() => setSelectedPayment('express')}
-                >
-                  <CreditCard size={80} color={selectedPayment === 'express' ? '#188AEC' : 'grey'} weight="fill" />
-                  <Text style={styles.money}>Express</Text>
-                </TouchableOpacity>
+          <View style={styles.carContainer1}>
+  <View style={styles.information}>
+    <TextInput
+      placeholder="Data"
+      style={styles.input}
+      keyboardType="datetime"
+      returnKeyType="done"
+    />
+  </View>
+</View>
+<View style={styles.carContainer1}>
+  <View style={styles.information}>
+    <TextInput
+      placeholder="Horário"
+      style={styles.input}
+      keyboardType="default" // No specific keyboardType for time, using default
+      returnKeyType="done"
+    />
+  </View>
+</View>
+<View style={styles.carContainer1}>
+  <View style={styles.information}>
+    <TextInput
+      placeholder="Lugares"
+      style={styles.input}
+      keyboardType="numeric"
+      returnKeyType="done"
+    />
+  </View>
+</View>
+          
+          <View>   
                 <TouchableOpacity style={styles.confirmButton}>
-                  <Text style={styles.confirmButtonText}>Continuar</Text>
+                  <Text style={styles.confirmButtonText}>Confirmar Viagem</Text>
                 </TouchableOpacity>
           </View>
         </ScrollView>
@@ -176,9 +183,24 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     marginBottom: 19,
     marginTop: "5%",
+    borderWidth: 1,
+    borderColor: "#188AEC"
+  },
+  carContainer1: {
+    padding: 22,
+    backgroundColor: "#F8F9FD",
+    borderRadius: 10,
+    marginTop: "5%",
+    borderWidth: 0.5,
+    borderColor: "#B8B8B8"
+
   },
   information: {
     flexDirection: "row",
+  },
+  input:{
+    width: "100%"
+    
   },
   carImage: {
     width: "60%",
@@ -279,4 +301,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default TravelInformation;
+export default CreatTravel;
